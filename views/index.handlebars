@@ -1,33 +1,31 @@
-$.getJSON("/articles", function (data) {
-    // For each one
-    data.forEach(element => {
-        var card = $("<div>");
-        card.addClass("card");
-        var body = $("<div>");
-        body.addClass("card-body");
-        var articleLink = $("<a>");
-        articleLink.attr("href", element.link);
-        var title = $("<h3>")
-            .text(element.title);
-        articleLink.append(title);
-        var summary = $("<p>")
-        .addClass("card-text")
-        .text(element.summary);
+    <div class="container">
+      <h1>Mongo Scraper</h1>
+      <h2>A scraper using mongoose and cheerio.</h2>
 
-        var commentBtn = $("<button>")
-            .attr("data-id", element._id)
-            .addClass("btn btn-primary float-right viewComments")
-            .text("Comments");
-        var commentArea = $("<div>")
-            .addClass("commentArea hide");
+      <a href="/scrape"><button class="btn btn-outline-primary">Scrape new articles</button></a>
+      <br>
+      <br>
 
-        body.append(articleLink, summary, commentBtn, commentArea);
-        card.append(body);
-        $("#articles").append(card);
-    });
+      <div id="articles">
 
-});
+    {{#each data}}
+    <div class="card">
+      <div class="card-body">
+        <a href={{link}} class="card-title"><h3>{{title}}</h3></a>
+        <p class="card-text">{{summary}}</p>
+        <button data-id={{_id}} class="btn btn-primary viewComments float-right">Comments</button>
+        <div class="commentArea hide"></div>
 
+      </div>
+
+    </div>
+  
+   {{/each}}
+ 
+  
+    </div>
+
+    <script>
 
 
 $(document).on("click", ".viewComments", function () {
@@ -57,13 +55,16 @@ function callOneArticle(thisId, commentArea) {
         })
 
         .then(function (data) {
+          console.log(data);
+          console.log(data.comm);
+    
 
             if (data.comm.length) {
                 data.comm.forEach(item =>{
                     commentArea.append("<h5>" + item.title + "</h5>")
                     .append("<p>" + item.body + "</p>");
                 });
-            }
+            } 
 
             var form = $("<form>");
             var titleInput = $("<div>")
@@ -106,8 +107,10 @@ $(document).on("click", "#savenote", function () {
         // With that done
         .then(function (data) {
             // Log the response
-            console.log(JSON.stringify(data) + " this is the response");
+            console.log(JSON.stringify(data) + " this is the response from the post request");
 
         }).then(function() {
-            callOneArticle(thisId, commentArea)} );
+          callOneArticle(thisId, commentArea)
+          });
 });
+    </script>
